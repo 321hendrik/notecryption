@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ti:app xmlns:ti="http://ti.appcelerator.org">
+    <property name="acs-oauth-secret-production" type="string">dPuYXQ7nOoCPrwvnTqUs4juUBZiTAVjD</property>
+    <property name="acs-oauth-key-production" type="string">hfmH5zZ2z5gwe4ecJN2FdaXdTLL2dL4m</property>
+    <property name="acs-api-key-production" type="string">EZzsmUfmF1fTwBM2gDK2zsTbTml9gURr</property>
+    <property name="acs-oauth-secret-development" type="string">NS2rZbVBXOXfI0ESYDY6uT4wyYaTtWe3</property>
+    <property name="acs-oauth-key-development" type="string">w5OHDcSEb0upZFPxT4HcOka5ZvwjJEQq</property>
+    <property name="acs-api-key-development" type="string">PcIVl7kaOjNfO4TW6rrMc736h8POs6TM</property>
+    <id>com.hendrik.notecryption</id>
+    <name>notecryption</name>
+    <version>1.0</version>
+    <publisher>hendrik_elsner</publisher>
+    <url>http://</url>
+    <description>not specified</description>
+    <copyright>2013 by hendrik_elsner</copyright>
+    <icon>appicon.png</icon>
+    <persistent-wifi>false</persistent-wifi>
+    <prerendered-icon>false</prerendered-icon>
+    <statusbar-style>default</statusbar-style>
+    <statusbar-hidden>false</statusbar-hidden>
+    <fullscreen>false</fullscreen>
+    <navbar-hidden>false</navbar-hidden>
+    <analytics>true</analytics>
+    <guid>647241cb-e0ab-4288-9106-8d307d96774f</guid>
+    <property name="ti.ui.defaultunit">dip</property>
+    <iphone>
+        <orientations device="iphone">
+            <orientation>Ti.UI.PORTRAIT</orientation>
+        </orientations>
+        <orientations device="ipad">
+            <orientation>Ti.UI.PORTRAIT</orientation>
+            <orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
+            <orientation>Ti.UI.LANDSCAPE_LEFT</orientation>
+            <orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
+        </orientations>
+    </iphone>
+    <android xmlns:android="http://schemas.android.com/apk/res/android">
+    	 <tool-api-level>14</tool-api-level>
+    </android>
+    <mobileweb>
+        <precache/>
+        <splash>
+            <enabled>true</enabled>
+            <inline-css-images>true</inline-css-images>
+        </splash>
+        <theme>default</theme>
+    </mobileweb>
+    <modules>
+        <module platform="commonjs">ti.cloud</module>
+    </modules>
+    <deployment-targets>
+        <target device="android">true</target>
+        <target device="blackberry">false</target>
+        <target device="ipad">true</target>
+        <target device="iphone">true</target>
+        <target device="mobileweb">false</target>
+        <target device="tizen">false</target>
+    </deployment-targets>
+    <sdk-version>3.1.1.GA</sdk-version>
+</ti:app>
