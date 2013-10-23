@@ -1,10 +1,10 @@
 //FirstView Component Constructor
 function FirstView() {
 	//create object instance, a parasitic subclass of Observable
-	var self = Ti.UI.createView();
+	var self = Ti.UI.createScrollView();
 	
 	var container = Ti.UI.createView({
-		top: 10,
+		top: 0,
 		center: {x:'50%'},
 		width: Ti.UI.SIZE,
 		height: Ti.UI.SIZE,
@@ -21,7 +21,7 @@ function FirstView() {
 	var labelHeadLine = Ti.UI.createLabel({
 		color:'#999',
 		text: 'NoteCryption',
-		font: {fontSize:'45sp', fontWeight:'bold'},
+		font: {fontSize:'30sp', fontWeight:'bold'},
 		center: {x: '50%'},
 		height: 100,
 		width: Ti.UI.SIZE
@@ -37,33 +37,14 @@ function FirstView() {
 		returnKeyType: Ti.UI.RETURNKEY_DEFAULT,
 		textAlign: 'center',
 		hintText: 'Enter Key',
+		autocapitalization: false,
+		autocorrect: false,
 		value: '',
 		width: 200,
 		height: 30,
 		font: {fontSize: '16sp'}
 	});
 	container.add(textAreaKey);
-	
-	var spacer = Ti.UI.createView({
-		height: 20
-	});
-	container.add(spacer);
-	
-	var textAreaText = Ti.UI.createTextField({
-		borderWidth: 2,
-		borderColor: '#bbb',
-		borderRadius: 5,
-		color: '#000',
-		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
-		returnKeyType: Ti.UI.RETURNKEY_DEFAULT,
-		textAlign: 'center',
-		hintText: 'Enter Text',
-		value: '',
-		width: 200,
-		height: 30,
-		font: {fontSize: '16sp'}
-	});
-	container.add(textAreaText);
 	
 	var buttonContainer = Ti.UI.createView({
 		top: 20,
@@ -83,9 +64,9 @@ function FirstView() {
 	buttonContainer.add(btnEncrypt);
 	btnEncrypt.addEventListener('singletap', function (e) {
 		var encrypted = encrypt(textAreaText.value, textAreaKey.value);
-		alert('encrypted: ' + encrypted);
 		textAreaText.value = encrypted;
 	});
+	
 	var btnDecrypt = Ti.UI.createButton({
 		title: 'Decrypt',
 		width: 60,
@@ -95,13 +76,42 @@ function FirstView() {
 	buttonContainer.add(btnDecrypt);
 	btnDecrypt.addEventListener('singletap', function (e) {
 		var decrypted = decrypt(textAreaText.value, textAreaKey.value);
-		alert('decrypted: ' + decrypted);
 		textAreaText.value = decrypted;
 	});
 	
-	// use ECB Blowfish plugin @TODO fix trailing zeros
+	var textAreaText = Ti.UI.createTextArea({
+		top: 20,
+		textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
+		borderWidth: 2,
+		borderColor: '#bbb',
+		borderRadius: 5,
+		color: '#000',
+		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
+		returnKeyType: Ti.UI.RETURNKEY_DEFAULT,
+		textAlign: 'center',
+		hintText: 'Enter Text',
+		autocapitalization: false,
+		autocorrect: false,
+		horizontalWrap: true,
+		value: '',
+		width: 200,
+		height: 200,
+		font: {fontSize: '16sp'}
+	});
+	container.add(textAreaText);
+	
+	// use ECB Blowfish plugin
 	var Blowfish = require("com.dmrsolutions.blowfish").Blowfish;
 	function encrypt(text, key) {
+		zeros = 0;
+		for (i = text.length; i--;) {
+			if (text[i] == '0') {
+				zeros++;
+			} else {
+				break;
+			}
+		}
+		Ti.App.Properties.setInt('zeros', zeros);
 		var bfEnc = new Blowfish(key);
 		var encryptedText = bfEnc.encrypt(text);
 		return encryptedText;
@@ -110,6 +120,18 @@ function FirstView() {
 	function decrypt(text, key) {
 		var bfDec = new Blowfish(key);
 		var decryptedText = bfDec.decrypt(text);
+		var zeros = Ti.App.Properties.getInt('zeros');
+		var decryptLeftoverZeros = 0;
+		for (i = decryptedText.length; i--;) {
+			if (decryptedText[i] == '0') {
+				decryptLeftoverZeros++;
+			} else {
+				break;
+			}
+		}
+		if (decryptLeftoverZeros > zeros) {
+			decryptedText = decryptedText.slice(0, (decryptLeftoverZeros - zeros)*-1);
+		}
 		return decryptedText;
 	}
 	
