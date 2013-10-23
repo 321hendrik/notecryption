@@ -16,7 +16,6 @@ function FirstView() {
 		textAreaKey.blur();
 		textAreaText.blur();
 	});
-
 	
 	var labelHeadLine = Ti.UI.createLabel({
 		color:'#999',
@@ -41,7 +40,7 @@ function FirstView() {
 		autocorrect: false,
 		value: '',
 		width: 200,
-		height: 30,
+		height: Ti.UI.SIZE,
 		font: {fontSize: '16sp'}
 	});
 	container.add(textAreaKey);
@@ -57,8 +56,8 @@ function FirstView() {
 	
 	var btnEncrypt = Ti.UI.createButton({
 		title: 'Encrypt',
-		width: 60,
-		height: 30,
+		width: Ti.UI.SIZE,
+		height: Ti.UI.SIZE,
 		font: {fontSize: '16sp'}
 	});
 	buttonContainer.add(btnEncrypt);
@@ -69,8 +68,8 @@ function FirstView() {
 	
 	var btnDecrypt = Ti.UI.createButton({
 		title: 'Decrypt',
-		width: 60,
-		height: 30,
+		width: Ti.UI.SIZE,
+		height: Ti.UI.SIZE,
 		font: {fontSize: '16sp'}
 	});
 	buttonContainer.add(btnDecrypt);

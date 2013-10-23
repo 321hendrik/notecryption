@@ -35,7 +35,6 @@
         </orientations>
     </iphone>
     <android xmlns:android="http://schemas.android.com/apk/res/android">
-        <tool-api-level>14</tool-api-level>
     </android>
     <mobileweb>
         <precache/>
@@ -57,5 +56,5 @@
         <target device="iphone">true</target>
         <target device="mobileweb">false</target>
     </deployment-targets>
-    <sdk-version>3.1.3.v20130916153052</sdk-version>
+    <sdk-version>3.1.3.GA</sdk-version>
 </ti:app>
