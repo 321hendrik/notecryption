@@ -3,6 +3,8 @@ function FirstView() {
 	//create object instance, a parasitic subclass of Observable
 	var self = Ti.UI.createScrollView();
 	
+	var Blowfish = require('/lib/Blowfish');
+	
 	var container = Ti.UI.createView({
 		top: 0,
 		center: {x:'50%'},
@@ -62,7 +64,7 @@ function FirstView() {
 	});
 	buttonContainer.add(btnEncrypt);
 	btnEncrypt.addEventListener('singletap', function (e) {
-		var encrypted = encrypt(textAreaText.value, textAreaKey.value);
+		var encrypted = Blowfish.encrypt(textAreaText.value, textAreaKey.value);
 		textAreaText.value = encrypted;
 	});
 	
@@ -74,7 +76,7 @@ function FirstView() {
 	});
 	buttonContainer.add(btnDecrypt);
 	btnDecrypt.addEventListener('singletap', function (e) {
-		var decrypted = decrypt(textAreaText.value, textAreaKey.value);
+		var decrypted = Blowfish.decrypt(textAreaText.value, textAreaKey.value);
 		textAreaText.value = decrypted;
 	});
 	
@@ -98,41 +100,6 @@ function FirstView() {
 		font: {fontSize: '16sp'}
 	});
 	container.add(textAreaText);
-	
-	// use ECB Blowfish plugin
-	var Blowfish = require("com.dmrsolutions.blowfish").Blowfish;
-	function encrypt(text, key) {
-		zeros = 0;
-		for (i = text.length; i--;) {
-			if (text[i] == '0') {
-				zeros++;
-			} else {
-				break;
-			}
-		}
-		Ti.App.Properties.setInt('zeros', zeros);
-		var bfEnc = new Blowfish(key);
-		var encryptedText = bfEnc.encrypt(text);
-		return encryptedText;
-	}
-	
-	function decrypt(text, key) {
-		var bfDec = new Blowfish(key);
-		var decryptedText = bfDec.decrypt(text);
-		var zeros = Ti.App.Properties.getInt('zeros');
-		var decryptLeftoverZeros = 0;
-		for (i = decryptedText.length; i--;) {
-			if (decryptedText[i] == '0') {
-				decryptLeftoverZeros++;
-			} else {
-				break;
-			}
-		}
-		if (decryptLeftoverZeros > zeros) {
-			decryptedText = decryptedText.slice(0, (decryptLeftoverZeros - zeros)*-1);
-		}
-		return decryptedText;
-	}
 	
 	return self;
 }

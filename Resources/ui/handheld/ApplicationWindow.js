@@ -1,7 +1,7 @@
 //Application Window Component Constructor
 function ApplicationWindow() {
 	//load component dependencies
-	var FirstView = require('ui/common/FirstView');
+	var FirstView = require('ui/common/MasterView');
 		
 	//create component instance
 	var self = Ti.UI.createWindow({
