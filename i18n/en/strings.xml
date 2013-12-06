@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-	<string name="welcome">Welcome to %s!</string>
+	<string name="keyAlert">Please enter your key!</string>
+	<string name="setKey">Activate</string>
+	<string name="enterTitle">Enter a title...</string>
+	<string name="enterText">Enter your text...</string>
+	<string name="cancel">Cancel</string>
+	<string name="save">Save</string>
 </resources>

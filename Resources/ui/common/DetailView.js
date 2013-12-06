@@ -37,7 +37,7 @@ function FirstView(args, parent) {
 		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
 		returnKeyType: Ti.UI.RETURNKEY_DEFAULT,
 		textAlign: 'left',
-		hintText: 'Enter Title',
+		hintText: L('enterTitle'),
 		autocapitalization: false,
 		autocorrect: false,
 		value: title,
@@ -58,7 +58,7 @@ function FirstView(args, parent) {
 	self.add(scrollView);
 	
 	var textArea = Ti.UI.createTextArea({
-		hintText: 'Enter Text',
+		hintText: L('enterText'),
 		value: Ti.App.Blowfish.decrypt( encryptedText, key ),
 		textAlign: 'left',
 		width: Ti.UI.FILL,
@@ -80,7 +80,7 @@ function FirstView(args, parent) {
 		height: 40,
 	});
 	var lblSave = Ti.UI.createLabel({
-		text: 'Save',
+		text: L('save'),
 		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
 		verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
 		font: {fontSize: '16sp'},
@@ -94,10 +94,10 @@ function FirstView(args, parent) {
 	});
 	btnContainer.add(lblSave);
 	var lblCancel = Ti.UI.createLabel({
-		text: 'Cancel',
+		text: L('cancel'),
 		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
 		verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
-		font: {fontSize: '14sp'},
+		font: {fontSize: '16sp'},
 		color: '#EB2A2A',
 		right: 0,
 		width: '50%'

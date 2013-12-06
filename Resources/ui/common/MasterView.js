@@ -34,8 +34,9 @@ function FirstView() {
 	lockerIcon.addEventListener('click', function () {
 		key = '';
 		lockerIcon.animate({bottom: -50, opacity: 0.0, duration: 300});
-		keybox.animate({height: 40, duration: 150});
-		keybox.animate({opacity: 1.0, duration: 150});
+		keybox.opacity = 1.0;
+		keybox.height = 40;
+		//keybox.animate({opacity: 1.0, height: 40, duration: 200});
 	});
 	headerContainer.add(lockerIcon);
 	var lockerBar = Ti.UI.createView({
@@ -82,7 +83,7 @@ function FirstView() {
 	var keyField = Ti.UI.createTextField({
 		passwordMask: true,
 		left: 5,
-		right: 45,
+		right: 65,
 		width: Ti.UI.FILL,
 		height: Ti.UI.FILL,
 		color: '#fff',
@@ -99,15 +100,15 @@ function FirstView() {
 	keybox.add(keyField);
 	
 	var btnSet = Ti.UI.createView({
-		width: 40,
+		width: 60,
 		right: 5,
 		height: Ti.UI.FILL,
 		backgroundColor: 'transparent'
 	});
 	var btnLbl = Ti.UI.createLabel({
 		center: {x:'50%',y:'50%'},
-		text: 'Set',
-		font: {fontSize: '16sp'},
+		text: L('setKey'),
+		font: {fontSize: '14sp'},
 		color: '#000',
 		touchEnabled: false
 	});
@@ -138,9 +139,13 @@ function FirstView() {
 		separatorColor: 'transparent'
 	});
 	tableView.addEventListener('click', function(e) {
-		var rowTitle = e.row.title;
-		var rowText = Ti.App.Blowfish.encrypt( e.row.value.text, key );
-		var detailWindow = new DetailWindow({title: rowTitle, text: rowText}).open();
+		if ( key.length ) {
+			var rowTitle = e.row.title;
+			var rowText = Ti.App.Blowfish.encrypt( e.row.value.text, key );
+			var detailWindow = new DetailWindow({title: rowTitle, text: rowText, key: key}).open();
+		} else {
+			alert(L('keyAlert'));
+		}
 	});
 	scrollView.add(tableView);
 	
