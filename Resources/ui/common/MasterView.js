@@ -3,6 +3,12 @@ function FirstView() {
 	var DetailWindow = require('/ui/handheld/DetailWindow');
 	var key = '';
 	
+	//create app directory
+	var appDir = Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'entries');
+	if ( !appDir.exists() ) {
+		appDir.createDirectory();
+	}
+	
 	var self = Ti.UI.createView({
 		layout: 'vertical'
 	});
@@ -140,38 +146,64 @@ function FirstView() {
 	});
 	tableView.addEventListener('click', function(e) {
 		if ( key.length ) {
-			var rowTitle = e.row.title;
-			var rowText = Ti.App.Blowfish.encrypt( e.row.value.text, key );
-			var detailWindow = new DetailWindow({title: rowTitle, text: rowText, key: key}).open();
+			//var rowText = Ti.App.Blowfish.encrypt( e.row.value.text, key );
+			var rowTitle = ( e.row.title == L('newEntry') ) ? '' : e.row.title;
+			var detailWindow = new DetailWindow({title: rowTitle, text: e.row.value.text, key: key, fileObject: e.row.fileObject});
+			detailWindow.addEventListener('close', function () {
+				updateTableView();
+			});
+			detailWindow.open();
 		} else {
 			alert(L('keyAlert'));
 		}
 	});
 	scrollView.add(tableView);
 	
-	var testData = [
-		{title: 'test 0', text: 'text 0'},
-		{title: 'test 1', text: 'text 1'},
-		{title: 'test 2', text: 'text 2'},
-		{title: 'test 3', text: 'text 3'},
-		{title: 'test 4', text: 'text 4'},
-		{title: 'test 5', text: 'text 5'},
-		{title: 'test 6', text: 'text 6'}
-	];
-	
-	for (var i = 0; i < testData.length; i++) {
-		var row = Ti.UI.createTableViewRow({
-			backgroundColor: '#88ffffff',
-			title: testData[i].title,
+	function updateTableView() {
+		// load files and parse entries
+		var appDirFiles = appDir.getDirectoryListing();
+		var entries = [];
+		for (i = 0; i < appDirFiles.length; i++) {
+			var file = Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'entries', appDirFiles[i]);
+			if ( file.exists() ) {
+				var entry = JSON.parse(file.read());
+				entries.push({title: entry.title, text: entry.text, fileObject: file.nativePath});
+			}
+		}
+		
+		// clear tableView
+		tableView.setData([]);
+		
+		// generate tableView rows
+		var newEntryRow = Ti.UI.createTableViewRow({
+			backgroundColor: '#883AC23F',
+			title: L('newEntry'),
 			font: {fontSize: '18sp'},
 			color: '#000000',
-			value: testData[i],
-			height: 50,
+			value: {title: '', text: '', path: ''},
+			height: 40,
 			backgroundSelectedColor: '#829FB8',
-			selectedColor: '#829FB8'
+			selectedColor: '#829FB8',
+			fileObject: null
 		});
-		tableView.appendRow(row);
+		tableView.appendRow(newEntryRow);
+		
+		for (var i = 0; i < entries.length; i++) {
+			var row = Ti.UI.createTableViewRow({
+				backgroundColor: '#88ffffff',
+				title: entries[i].title,
+				font: {fontSize: '18sp'},
+				color: '#000000',
+				value: entries[i],
+				height: 40,
+				backgroundSelectedColor: '#829FB8',
+				selectedColor: '#829FB8',
+				fileObject: entries[i].fileObject
+			});
+			tableView.appendRow(row);
+		}
 	}
+	updateTableView();
 	
 	return self;
 }

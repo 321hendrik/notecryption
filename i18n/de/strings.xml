@@ -6,4 +6,6 @@
 	<string name="enterText">Geben Sie ihren Text ein...</string>
 	<string name="cancel">Abbrechen</string>
 	<string name="save">Speichern</string>
+	<string name="delete">Löschen</string>
+	<string name="newEntry">Neuen Eintrag erstellen...</string>
 </resources>

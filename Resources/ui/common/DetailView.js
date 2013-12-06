@@ -2,8 +2,9 @@
 function FirstView(args, parent) {
 	
 	var title = args.title;
-	var encryptedText = args.text;
+	var text = args.text;
 	var key = args.key;
+	var fileObject = args.fileObject;
 	
 	var self = Ti.UI.createView({
 		height: Ti.UI.FILL,
@@ -59,7 +60,7 @@ function FirstView(args, parent) {
 	
 	var textArea = Ti.UI.createTextArea({
 		hintText: L('enterText'),
-		value: Ti.App.Blowfish.decrypt( encryptedText, key ),
+		value: ( text ) ? Ti.App.Blowfish.decrypt( text, key ) : '',
 		textAlign: 'left',
 		width: Ti.UI.FILL,
 		height: Ti.UI.SIZE,
@@ -79,6 +80,10 @@ function FirstView(args, parent) {
 		width: Ti.UI.FILL,
 		height: 40,
 	});
+	
+	var enableDelete = ( fileObject != null ) ? true : false;
+	
+	// save button
 	var lblSave = Ti.UI.createLabel({
 		text: L('save'),
 		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
@@ -86,21 +91,47 @@ function FirstView(args, parent) {
 		font: {fontSize: '16sp'},
 		color: '#3AC23F',
 		left: 0,
-		width: '50%'
+		width: ( enableDelete ) ? '33%' : '50%'
 	});
-	lblSave.addEventListener('click', function () {
-		// do save
+	lblSave.addEventListener('click', function () {// @TODO fix saving changes to new file
+		if ( fileObject == null ) {
+			var fileObject = Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'entries', 'entry_' + new Date().getTime() + '.json');
+		} else {
+			var fileObject = Ti.Filesystem.getFile(fileObject);
+		}
+		fileObject.write(JSON.stringify({title: titleField.value, text: Ti.App.Blowfish.encrypt( textArea.value, key )}));
 		parent.close();
 	});
 	btnContainer.add(lblSave);
+	
+	if ( enableDelete ) {
+		// delete button
+		var lblDelete = Ti.UI.createLabel({
+			text: L('delete'),
+			textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+			verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
+			font: {fontSize: '16sp'},
+			color: '#EB2A2A',
+			center: {x: '50%'},
+			width: '34%'
+		});
+		lblDelete.addEventListener('click', function () {
+			var fileObject = Ti.Filesystem.getFile(fileObject);
+			fileObject.deleteFile();
+			parent.close();
+		});
+		btnContainer.add(lblDelete);
+	}
+	
+	// cancel button
 	var lblCancel = Ti.UI.createLabel({
 		text: L('cancel'),
 		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
 		verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
 		font: {fontSize: '16sp'},
-		color: '#EB2A2A',
+		color: '#000000',
 		right: 0,
-		width: '50%'
+		width: ( enableDelete ) ? '33%' : '50%'
 	});
 	lblCancel.addEventListener('click', function () {
 		parent.close();
