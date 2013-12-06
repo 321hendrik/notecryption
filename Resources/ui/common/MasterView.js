@@ -1,11 +1,11 @@
 //FirstView Component Constructor
 function FirstView() {
-	//create object instance, a parasitic subclass of Observable
+	var DetailWindow = require('/ui/handheld/DetailWindow');
+	var key = '';
+	
 	var self = Ti.UI.createView({
 		layout: 'vertical'
 	});
-	
-	var DetailWindow = require('/ui/handheld/DetailWindow');
 	
 	// HEADER
 	var headerContainer = Ti.UI.createView({
@@ -32,9 +32,10 @@ function FirstView() {
 		opacity: 0.0
 	});
 	lockerIcon.addEventListener('click', function () {
-		Ti.App.Properties.setString('Key', '');
+		key = '';
 		lockerIcon.animate({bottom: -50, opacity: 0.0, duration: 300});
-		keybox.animate({height: 40, opacity: 1.0, duration: 300});
+		keybox.animate({height: 40, duration: 150});
+		keybox.animate({opacity: 1.0, duration: 150});
 	});
 	headerContainer.add(lockerIcon);
 	var lockerBar = Ti.UI.createView({
@@ -79,13 +80,11 @@ function FirstView() {
 	self.add(keybox);
 	
 	var keyField = Ti.UI.createTextField({
-		passwordMask: true, // @TODO activate pw-mask
+		passwordMask: true,
 		left: 5,
 		right: 45,
 		width: Ti.UI.FILL,
 		height: Ti.UI.FILL,
-		//borderWidth: 2,
-		//borderColor: '#bbb',
 		color: '#fff',
 		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
 		returnKeyType: Ti.UI.RETURNKEY_DEFAULT,
@@ -114,7 +113,8 @@ function FirstView() {
 	});
 	btnSet.add(btnLbl);
 	btnSet.addEventListener('click', function () {
-		Ti.App.Properties.setString('Key', keyField.value.toString());
+		key = keyField.value.toString();
+		keyField.value = '';
 		keyField.blur();
 		keybox.animate({height: 1, opacity: 0.0, duration: 300});
 		lockerIcon.animate({bottom: 5, opacity: 1.0, duration: 300});
@@ -138,19 +138,20 @@ function FirstView() {
 		separatorColor: 'transparent'
 	});
 	tableView.addEventListener('click', function(e) {
-		new DetailWindow(e.row.value).open();
-		// alert(e.row.value);
+		var rowTitle = e.row.title;
+		var rowText = Ti.App.Blowfish.encrypt( e.row.value.text, key );
+		var detailWindow = new DetailWindow({title: rowTitle, text: rowText}).open();
 	});
 	scrollView.add(tableView);
 	
 	var testData = [
-		{title: 'test0', value: '0'},
-		{title: 'test1', value: '1'},
-		{title: 'test2', value: '2'},
-		{title: 'test3', value: '3'},
-		{title: 'test4', value: '4'},
-		{title: 'test5', value: '5'},
-		{title: 'test6', value: '6'}
+		{title: 'test 0', text: 'text 0'},
+		{title: 'test 1', text: 'text 1'},
+		{title: 'test 2', text: 'text 2'},
+		{title: 'test 3', text: 'text 3'},
+		{title: 'test 4', text: 'text 4'},
+		{title: 'test 5', text: 'text 5'},
+		{title: 'test 6', text: 'text 6'}
 	];
 	
 	for (var i = 0; i < testData.length; i++) {
@@ -159,7 +160,7 @@ function FirstView() {
 			title: testData[i].title,
 			font: {fontSize: '18sp'},
 			color: '#000000',
-			value: testData[i].value,
+			value: testData[i],
 			height: 50,
 			backgroundSelectedColor: '#829FB8',
 			selectedColor: '#829FB8'

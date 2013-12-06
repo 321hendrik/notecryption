@@ -1,5 +1,5 @@
 
-function DetailWindow(text) {
+function DetailWindow(args) {
 	//load component dependencies
 	var DetailView = require('ui/common/DetailView');
 		
@@ -10,7 +10,7 @@ function DetailWindow(text) {
 	});
 		
 	//construct UI
-	var detailView = new DetailView({text: text, parent: self});
+	var detailView = new DetailView(args, self);
 	self.add(detailView);
 	
 	return self;
