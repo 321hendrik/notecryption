@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
 	<string name="keyAlert">Bitte tragen Sie ihren Schlüssel ein!</string>
+	<string name="enterKey">Schlüssel eingeben...</string>
 	<string name="setKey">Aktivieren</string>
 	<string name="enterTitle">Geben Sie einen Titel ein...</string>
 	<string name="enterText">Geben Sie ihren Text ein...</string>

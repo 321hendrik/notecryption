@@ -97,7 +97,7 @@ function FirstView() {
 		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
 		returnKeyType: Ti.UI.RETURNKEY_DEFAULT,
 		textAlign: 'center',
-		hintText: 'Enter Key',
+		hintText: L('enterKey'),
 		autocapitalization: false,
 		autocorrect: false,
 		clearOnEdit: true,
