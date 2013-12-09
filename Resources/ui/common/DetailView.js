@@ -34,7 +34,7 @@ function FirstView(args, parent) {
 		left: 5,
 		right: 5,
 		width: Ti.UI.FILL,
-		height: 30,
+		height: (Ti.Platform.osname != 'android') ? 30 : 40,
 		color: '#000',
 		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
 		returnKeyType: Ti.UI.RETURNKEY_DEFAULT,
@@ -55,7 +55,7 @@ function FirstView(args, parent) {
 		height: Ti.UI.FILL,
 		width: Ti.UI.FILL,
 		bottom: 40,
-		top: 75
+		top: (Ti.Platform.osname != 'android') ? 75 : 80
 	});
 	self.add(scrollView);
 	

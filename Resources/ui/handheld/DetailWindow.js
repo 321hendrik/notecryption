@@ -5,8 +5,10 @@ function DetailWindow(args) {
 		
 	//create component instance
 	var self = Ti.UI.createWindow({
-		backgroundColor:'#ffffff',
-		navBarHidden:true
+		backgroundColor: '#ffffff',
+		navBarHidden: true,
+		fullscreen: false,
+		exitOnClose: false
 	});
 		
 	//construct UI

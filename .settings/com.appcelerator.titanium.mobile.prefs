@@ -1,6 +1,6 @@
-android/alias=
-android/keystore=
-android/output_location=
-android/recent_output=
+android/alias=hpmKeystore
+android/keystore=/Users/hendrik_elsner/Documents/Keys_and_Certs/HPM_Android_KEY_hpmKeystore_PW_hpmkomm2012
+android/output_location=/Users/hendrik_elsner/Documents/APP APKs Android
+android/recent_output=/Users/hendrik_elsner/Documents/APP APKs Android,
 android/sdk=Google APIs (Android 4.2.2)
 eclipse.preferences.version=1
