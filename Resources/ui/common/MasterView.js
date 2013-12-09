@@ -10,6 +10,7 @@ function FirstView() {
 	}
 	
 	var self = Ti.UI.createView({
+		top: (Ti.App.iOS7) ? 20 : 0,
 		layout: 'vertical'
 	});
 	
@@ -106,7 +107,7 @@ function FirstView() {
 	keybox.add(keyField);
 	
 	var btnSet = Ti.UI.createView({
-		width: 60,
+		width: Ti.UI.SIZE,
 		right: 5,
 		height: Ti.UI.FILL,
 		backgroundColor: 'transparent'
@@ -148,7 +149,7 @@ function FirstView() {
 		if ( key.length ) {
 			//var rowText = Ti.App.Blowfish.encrypt( e.row.value.text, key );
 			var rowTitle = ( e.row.title == L('newEntry') ) ? '' : e.row.title;
-			var detailWindow = new DetailWindow({title: rowTitle, text: e.row.value.text, key: key, fileObject: e.row.fileObject});
+			var detailWindow = new DetailWindow({title: rowTitle, text: e.row.value.text, key: key, filePath: e.row.value.filePath});
 			detailWindow.addEventListener('close', function () {
 				updateTableView();
 			});
@@ -160,6 +161,7 @@ function FirstView() {
 	scrollView.add(tableView);
 	
 	function updateTableView() {
+		
 		// load files and parse entries
 		var appDirFiles = appDir.getDirectoryListing();
 		var entries = [];
@@ -167,12 +169,11 @@ function FirstView() {
 			var file = Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'entries', appDirFiles[i]);
 			if ( file.exists() ) {
 				var entry = JSON.parse(file.read());
-				entries.push({title: entry.title, text: entry.text, fileObject: file.nativePath});
+				entries.push({title: entry.title, text: entry.text, filePath: file.getNativePath()});
 			}
 		}
 		
-		// clear tableView
-		tableView.setData([]);
+		var tableData = [];
 		
 		// generate tableView rows
 		var newEntryRow = Ti.UI.createTableViewRow({
@@ -180,15 +181,15 @@ function FirstView() {
 			title: L('newEntry'),
 			font: {fontSize: '18sp'},
 			color: '#000000',
-			value: {title: '', text: '', path: ''},
+			value: {title: '', text: '', filePath: null},
 			height: 40,
 			backgroundSelectedColor: '#829FB8',
 			selectedColor: '#829FB8',
-			fileObject: null
 		});
-		tableView.appendRow(newEntryRow);
+		tableData.push(newEntryRow);
 		
 		for (var i = 0; i < entries.length; i++) {
+			Ti.API.log(entries[i].filePath);
 			var row = Ti.UI.createTableViewRow({
 				backgroundColor: '#88ffffff',
 				title: entries[i].title,
@@ -197,11 +198,13 @@ function FirstView() {
 				value: entries[i],
 				height: 40,
 				backgroundSelectedColor: '#829FB8',
-				selectedColor: '#829FB8',
-				fileObject: entries[i].fileObject
+				selectedColor: '#829FB8'
 			});
-			tableView.appendRow(row);
+			tableData.push(row);
 		}
+		
+		// update tableView
+		tableView.setData(tableData);
 	}
 	updateTableView();
 	

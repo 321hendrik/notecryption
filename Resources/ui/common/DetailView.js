@@ -4,9 +4,10 @@ function FirstView(args, parent) {
 	var title = args.title;
 	var text = args.text;
 	var key = args.key;
-	var fileObject = args.fileObject;
+	var filePath = args.filePath;
 	
 	var self = Ti.UI.createView({
+		top: (Ti.App.iOS7) ? 20 : 0,
 		height: Ti.UI.FILL,
 		width: Ti.UI.FILL
 	});
@@ -42,7 +43,7 @@ function FirstView(args, parent) {
 		autocapitalization: false,
 		autocorrect: false,
 		value: title,
-		font: {fontSize: '18sp'},
+		font: {fontSize: '20sp'},
 		ellipsize: true,
 		zIndex: 1
 	});
@@ -70,7 +71,8 @@ function FirstView(args, parent) {
 		right: 5,
 		backgroundColor: '#fff',
 		borderWidth: 0,
-		borderRadius: 5
+		borderRadius: 5,
+		font: {fontSize: '18sp'},
 	});
 	scrollView.add(textArea);
 	
@@ -81,7 +83,7 @@ function FirstView(args, parent) {
 		height: 40,
 	});
 	
-	var enableDelete = ( fileObject != null ) ? true : false;
+	var enableDelete = ( filePath != null ) ? true : false;
 	
 	// save button
 	var lblSave = Ti.UI.createLabel({
@@ -94,12 +96,13 @@ function FirstView(args, parent) {
 		width: ( enableDelete ) ? '33%' : '50%'
 	});
 	lblSave.addEventListener('click', function () {// @TODO fix saving changes to new file
-		if ( fileObject == null ) {
-			var fileObject = Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'entries', 'entry_' + new Date().getTime() + '.json');
+		Ti.API.log('filePath: '+filePath);
+		if ( filePath == null ) {
+			var file = Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'entries', 'entry_' + new Date().getTime() + '.json');
 		} else {
-			var fileObject = Ti.Filesystem.getFile(fileObject);
+			var file = Ti.Filesystem.getFile(filePath);
 		}
-		fileObject.write(JSON.stringify({title: titleField.value, text: Ti.App.Blowfish.encrypt( textArea.value, key )}));
+		file.write(JSON.stringify({title: titleField.value, text: Ti.App.Blowfish.encrypt( textArea.value, key )}));
 		parent.close();
 	});
 	btnContainer.add(lblSave);
@@ -116,8 +119,10 @@ function FirstView(args, parent) {
 			width: '34%'
 		});
 		lblDelete.addEventListener('click', function () {
-			var fileObject = Ti.Filesystem.getFile(fileObject);
-			fileObject.deleteFile();
+			var file = Ti.Filesystem.getFile(filePath);
+			if ( file.exists() ) {
+				file.deleteFile();
+			}
 			parent.close();
 		});
 		btnContainer.add(lblDelete);

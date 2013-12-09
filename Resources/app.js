@@ -2,6 +2,23 @@
 	// Blowfish Encryption Module
 	Ti.App.Blowfish = require('/lib/Blowfish');
 	
+	// iOS Version
+	function isiOS7Plus() {
+		if (Titanium.Platform.name == 'iPhone OS')
+		{
+			var version = Titanium.Platform.version.split(".");
+			var major = parseInt(version[0],10);
+			
+			if (major >= 7)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	Ti.App.iOS7 = isiOS7Plus();
+	
 	//render appropriate components based on the platform and form factor
 	var osname = Ti.Platform.osname,
 		version = Ti.Platform.version,
