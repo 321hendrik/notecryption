@@ -1,6 +1,5 @@
 //FirstView Component Constructor
 function FirstView(args, parent) {
-	
 	var title = args.title;
 	var text = args.text;
 	var key = args.key;
@@ -11,6 +10,12 @@ function FirstView(args, parent) {
 		height: Ti.UI.FILL,
 		width: Ti.UI.FILL
 	});
+
+	function returnToMaster () {
+		args.update(function () {
+			parent.shouldClose();
+		});
+	}
 	
 	var labelHeadLine = Ti.UI.createLabel({
 		top: 5,
@@ -27,12 +32,13 @@ function FirstView(args, parent) {
 		top: 55,
 		height: Ti.UI.SIZE,
 		width: Ti.UI.FILL,
-		backgroundColor: '#dedede',
+		backgroundColor: '#3AC23F',
 		zIndex: 2
 	});
 	var titleField = Ti.UI.createTextField({
 		width: Ti.UI.FILL,
-		height: (Ti.App.isAndroid) ? 40 : 30,
+		left: 5,
+		height: (Ti.App.isAndroid) ? 40 : 40,
 		color: '#fff',
 		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
 		returnKeyType: Ti.UI.RETURNKEY_DEFAULT,
@@ -43,7 +49,7 @@ function FirstView(args, parent) {
 		value: title,
 		font: {fontSize: '20sp'},
 		ellipsize: true,
-		backgroundColor: '#883AC23F',
+		backgroundColor: 'transparent',
 	});
 	titleFieldContainer.add(titleField);
 	self.add(titleFieldContainer);
@@ -53,7 +59,7 @@ function FirstView(args, parent) {
 		height: Ti.UI.FILL,
 		width: Ti.UI.FILL,
 		bottom: 40,
-		top: (Ti.App.isAndroid) ? 90 : 80
+		top: (Ti.App.isAndroid) ? 90 : 90
 	});
 	self.add(scrollView);
 	
@@ -96,13 +102,14 @@ function FirstView(args, parent) {
 	});
 	lblSave.addEventListener('click', function () {// @TODO fix saving changes to new file
 		Ti.API.log('filePath: '+filePath);
+		var file;
 		if ( !filePath ) {
-			var file = Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'entries', 'entry_' + new Date().getTime() + '.json');
+			file = Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'entries', 'entry_' + new Date().getTime() + '.json');
 		} else {
-			var file = Ti.Filesystem.getFile(filePath);
+			file = Ti.Filesystem.getFile(filePath);
 		}
 		file.write( JSON.stringify({title: titleField.value, text: Ti.App.Blowfish.encrypt( textArea.value, key )}) );
-		parent.shouldClose();
+		returnToMaster();
 	});
 	btnContainer.add(lblSave);
 	
@@ -122,7 +129,7 @@ function FirstView(args, parent) {
 			if ( file.exists() ) {
 				file.deleteFile();
 			}
-			parent.shouldClose();
+			returnToMaster();
 		});
 		btnContainer.add(lblDelete);
 	}
@@ -138,7 +145,7 @@ function FirstView(args, parent) {
 		width: ( enableDelete ) ? '33%' : '50%'
 	});
 	lblCancel.addEventListener('click', function () {
-		parent.shouldClose();
+		returnToMaster();
 	});
 	btnContainer.add(lblCancel);
 	

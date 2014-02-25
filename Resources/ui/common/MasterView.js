@@ -182,13 +182,22 @@ function FirstView(parent) {
 		if ( key.length ) {
 			//var rowText = Ti.App.Blowfish.encrypt( e.row.value.text, key );
 			var rowTitle = ( e.row.title == ' ' + L('newEntry') ) ? '' : e.row.title;
-			var detailWindow = new DetailWindow({title: rowTitle.slice(1), text: e.row.value.text, key: key, filePath: e.row.value.filePath});
+
+			var detailWindow = new DetailWindow({
+				title: rowTitle.slice(1),
+				text: e.row.value.text,
+				key: key,
+				filePath: e.row.value.filePath,
+				update: updateTableView
+			});
+
 			if (Ti.App.isAndroid) {
 				detailLaunch = true;
 				detailWindow.addEventListener('close', function() {
 					detailLaunch = false;
 				});
 			}
+
 			detailWindow.open(windowOpenAnimation);
 		} else {
 			colorNotify(keybox, '#88D44E4E');
@@ -197,8 +206,7 @@ function FirstView(parent) {
 	});
 	self.add(tableView);
 	
-	function updateTableView() {
-
+	function updateTableView(callback) {
 		// load files and parse entries
 		var appDirFiles = appDir.getDirectoryListing();
 		var entries = [];
@@ -214,7 +222,7 @@ function FirstView(parent) {
 		
 		// generate tableView rows
 		var newEntryRow = Ti.UI.createTableViewRow({
-			backgroundColor: '#883AC23F',
+			backgroundColor: '#3AC23F',
 			title: ' ' + L('newEntry'),
 			font: {fontSize: '18sp'},
 			color: '#000000',
@@ -242,12 +250,10 @@ function FirstView(parent) {
 		
 		// update tableView
 		tableView.setData(tableData);
-	}
-	updateTableView();
 
-	parent.addEventListener('focus', function () {
-		updateTableView();
-	});
+		callback();
+	}
+	updateTableView(function () {});
 
 	if (Ti.App.isAndroid) {
 		parent.addEventListener('open', function () {
