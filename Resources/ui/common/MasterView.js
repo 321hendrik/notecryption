@@ -2,6 +2,7 @@
 function FirstView(parent) {
 	var DetailWindow = require('/ui/handheld/DetailWindow');
 	var key = '';
+	var detailLaunch = false;
 
 	var windowOpenAnimation;
 	if (Ti.App.isAndroid) {
@@ -182,6 +183,12 @@ function FirstView(parent) {
 			//var rowText = Ti.App.Blowfish.encrypt( e.row.value.text, key );
 			var rowTitle = ( e.row.title == ' ' + L('newEntry') ) ? '' : e.row.title;
 			var detailWindow = new DetailWindow({title: rowTitle.slice(1), text: e.row.value.text, key: key, filePath: e.row.value.filePath});
+			if (Ti.App.isAndroid) {
+				detailLaunch = true;
+				detailWindow.addEventListener('close', function() {
+					detailLaunch = false;
+				});
+			}
 			detailWindow.open(windowOpenAnimation);
 		} else {
 			colorNotify(keybox, '#88D44E4E');
@@ -244,12 +251,14 @@ function FirstView(parent) {
 
 	if (Ti.App.isAndroid) {
 		parent.addEventListener('open', function () {
-			var activity = Ti.Android.currentActivity;
-			['resume', 'pause'].forEach(function(e) {
-				activity.addEventListener(e, function() {
+			var activity = parent.getActivity();
+			activity.addEventListener('pause', function() {
+				if (!detailLaunch) {
 					lockerIcon.fireEvent('click');
-					Ti.API.info((new Date()) + " Activity: " + e + " HIT!");
-				});
+					Ti.API.info("paused and left");
+				} else {
+					Ti.API.info("paused");
+				}
 			});
 		});
 	} else {
