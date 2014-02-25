@@ -235,7 +235,7 @@ function FirstView(parent) {
 		for (var i = 0; i < entries.length; i++) {
 			Ti.API.log(entries[i].filePath);
 			var row = Ti.UI.createTableViewRow({
-				backgroundColor: (i % 2) ? '#99ffffff' : '#77ffffff',
+				backgroundColor: (i % 2) ? '#99ffffff' : '#44ffffff',
 				title: ' ' + entries[i].title,
 				font: {fontSize: '18sp'},
 				color: '#000000',
@@ -254,6 +254,7 @@ function FirstView(parent) {
 	}
 	updateTableView(function () {});
 
+	// Reset key when app is paused
 	if (Ti.App.isAndroid) {
 		parent.addEventListener('open', function () {
 			var activity = parent.getActivity();
