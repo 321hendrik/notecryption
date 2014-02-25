@@ -24,18 +24,16 @@ function FirstView(args, parent) {
 	self.add(labelHeadLine);
 	
 	var titleFieldContainer = Ti.UI.createView({
-		top: 45,
+		top: 55,
 		height: Ti.UI.SIZE,
 		width: Ti.UI.FILL,
-		backgroundColor: '#dedede'
+		backgroundColor: '#dedede',
+		zIndex: 2
 	});
 	var titleField = Ti.UI.createTextField({
-		top: 2,
-		left: 5,
-		right: 5,
 		width: Ti.UI.FILL,
-		height: (Ti.Platform.osname != 'android') ? 30 : 40,
-		color: '#000',
+		height: (Ti.App.isAndroid) ? 40 : 30,
+		color: '#fff',
 		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
 		returnKeyType: Ti.UI.RETURNKEY_DEFAULT,
 		textAlign: 'left',
@@ -45,7 +43,7 @@ function FirstView(args, parent) {
 		value: title,
 		font: {fontSize: '20sp'},
 		ellipsize: true,
-		zIndex: 1
+		backgroundColor: '#883AC23F',
 	});
 	titleFieldContainer.add(titleField);
 	self.add(titleFieldContainer);
@@ -55,7 +53,7 @@ function FirstView(args, parent) {
 		height: Ti.UI.FILL,
 		width: Ti.UI.FILL,
 		bottom: 40,
-		top: (Ti.Platform.osname != 'android') ? 75 : 80
+		top: (Ti.App.isAndroid) ? 90 : 80
 	});
 	self.add(scrollView);
 	
@@ -65,14 +63,15 @@ function FirstView(args, parent) {
 		textAlign: 'left',
 		width: Ti.UI.FILL,
 		height: Ti.UI.SIZE,
-		top: 5,
+		top: 10,
 		bottom: 5,
 		left: 5,
 		right: 5,
 		backgroundColor: '#fff',
 		borderWidth: 0,
-		borderRadius: 5,
+		borderRadius: (Ti.App.isAndroid) ? 10 : 5,
 		font: {fontSize: '18sp'},
+		color: '#000'
 	});
 	scrollView.add(textArea);
 	
@@ -83,7 +82,7 @@ function FirstView(args, parent) {
 		height: 40,
 	});
 	
-	var enableDelete = ( filePath != null ) ? true : false;
+	var enableDelete = ( filePath ) ? true : false;
 	
 	// save button
 	var lblSave = Ti.UI.createLabel({
@@ -97,13 +96,13 @@ function FirstView(args, parent) {
 	});
 	lblSave.addEventListener('click', function () {// @TODO fix saving changes to new file
 		Ti.API.log('filePath: '+filePath);
-		if ( filePath == null ) {
+		if ( !filePath ) {
 			var file = Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'entries', 'entry_' + new Date().getTime() + '.json');
 		} else {
 			var file = Ti.Filesystem.getFile(filePath);
 		}
-		file.write(JSON.stringify({title: titleField.value, text: Ti.App.Blowfish.encrypt( textArea.value, key )}));
-		parent.close();
+		file.write( JSON.stringify({title: titleField.value, text: Ti.App.Blowfish.encrypt( textArea.value, key )}) );
+		parent.shouldClose();
 	});
 	btnContainer.add(lblSave);
 	
@@ -123,7 +122,7 @@ function FirstView(args, parent) {
 			if ( file.exists() ) {
 				file.deleteFile();
 			}
-			parent.close();
+			parent.shouldClose();
 		});
 		btnContainer.add(lblDelete);
 	}
@@ -139,7 +138,7 @@ function FirstView(args, parent) {
 		width: ( enableDelete ) ? '33%' : '50%'
 	});
 	lblCancel.addEventListener('click', function () {
-		parent.close();
+		parent.shouldClose();
 	});
 	btnContainer.add(lblCancel);
 	

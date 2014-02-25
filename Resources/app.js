@@ -18,6 +18,7 @@
 	}
 	
 	Ti.App.iOS7 = isiOS7Plus();
+	Ti.App.isAndroid = Ti.Platform.getOsname() == 'android';
 	
 	//render appropriate components based on the platform and form factor
 	var osname = Ti.Platform.osname,
@@ -30,19 +31,6 @@
 	var isTablet = osname === 'ipad' || (osname === 'android' && (width > 899 || height > 899));
 	
 	var Window;
-	Window = require('ui/handheld/ApplicationWindow');
-	// if (isTablet) {
-		// Window = require('ui/tablet/ApplicationWindow');
-	// }
-	// else {
-		// // Android uses platform-specific properties to create windows.
-		// // All other platforms follow a similar UI pattern.
-		// if (osname === 'android') {
-			// Window = require('ui/handheld/android/ApplicationWindow');
-		// }
-		// else {
-			// Window = require('ui/handheld/ApplicationWindow');
-		// }
-	// }
+	Window = require('ui/' + ((isTablet) ? 'tablet' : 'handheld') + '/ApplicationWindow');
 	new Window().open();
 })();

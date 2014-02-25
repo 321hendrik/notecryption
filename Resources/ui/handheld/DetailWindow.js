@@ -4,18 +4,34 @@ function DetailWindow(args) {
 	var DetailView = require('ui/common/DetailView');
 		
 	//create component instance
-	var self = Ti.UI.createWindow({
+	var detailWindow = Ti.UI.createWindow({
 		backgroundColor: '#ffffff',
 		navBarHidden: true,
 		fullscreen: false,
+		modal: false,
 		exitOnClose: false
 	});
-		
-	//construct UI
-	var detailView = new DetailView(args, self);
-	self.add(detailView);
+
+	var windowCloseAnimation;
+	if (Ti.App.isAndroid) {
+		windowCloseAnimation = {
+			animated: false
+		};
+	} else {
+		windowCloseAnimation = {
+			transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+		};
+	}
+
+	detailWindow.shouldClose = function () {
+		detailWindow.close(windowCloseAnimation);
+	};
 	
-	return self;
+	//construct UI
+	var detailView = new DetailView(args, detailWindow);
+	detailWindow.add(detailView);
+	
+	return detailWindow;
 }
 
 module.exports = DetailWindow;

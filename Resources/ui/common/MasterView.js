@@ -1,7 +1,31 @@
 //FirstView Component Constructor
-function FirstView() {
+function FirstView(parent) {
 	var DetailWindow = require('/ui/handheld/DetailWindow');
 	var key = '';
+
+	var windowOpenAnimation;
+	if (Ti.App.isAndroid) {
+		windowOpenAnimation = {
+			animated: false
+		};
+	} else {
+		windowOpenAnimation = {
+			transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_RIGHT
+		};
+	}
+
+	function colorNotify (viewObj, highlightColor) {
+		var baseColor = viewObj.backgroundColor;
+		viewObj.animate({
+			backgroundColor: baseColor,
+			duration: 200
+		}, function () {
+			viewObj.animate({
+				backgroundColor: highlightColor,
+				duration: 200
+			});
+		});
+	}
 	
 	//create app directory
 	var appDir = Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'entries');
@@ -16,8 +40,10 @@ function FirstView() {
 	
 	// HEADER
 	var headerContainer = Ti.UI.createView({
+		top: 0,
 		height: Ti.UI.SIZE,
-		width: Ti.UI.FILL
+		width: Ti.UI.FILL,
+		backgroundColor: '#fff'
 	});
 	self.add(headerContainer);
 	var labelHeadLine = Ti.UI.createLabel({
@@ -36,21 +62,29 @@ function FirstView() {
 		height: 30,
 		right: 10,
 		bottom: -50,
-		opacity: 0.0
+		opacity: 0.0,
+		active: false
 	});
 	lockerIcon.addEventListener('click', function () {
-		key = '';
-		lockerIcon.animate({bottom: -50, opacity: 0.0, duration: 300});
-		keybox.opacity = 1.0;
-		keybox.height = 40;
-		//keybox.animate({opacity: 1.0, height: 40, duration: 200});
+		if (lockerIcon.active){
+			key = '';
+			lockerIcon.animate({bottom: -50, opacity: 0.0, duration: 300});
+			lockerIcon.active = false;
+			if (Ti.App.isAndroid) {
+				tableView.animate({top: 90, duration: 200});
+				keybox.animate({opacity: 1.0, height: 40, duration: 200});
+			} else {
+				keybox.opacity = 1.0;
+				keybox.height = 40;
+			}
+		}
 	});
 	headerContainer.add(lockerIcon);
 	var lockerBar = Ti.UI.createView({
 		top: 0,
 		width: 26,
 		height: 26,
-		borderRadius: 13,
+		borderRadius: (Ti.App.isAndroid) ? 26 : 13,
 		backgroundColor: '#dedede'
 	});
 	lockerIcon.add(lockerBar);
@@ -58,7 +92,7 @@ function FirstView() {
 		top: 6,
 		width: 20,
 		height: 20,
-		borderRadius: 10,
+		borderRadius: (Ti.App.isAndroid) ? 20 : 10,
 		backgroundColor: '#ffffff'
 	});
 	lockerIcon.add(lockerHole);
@@ -66,7 +100,7 @@ function FirstView() {
 		bottom: 0,
 		width: 30,
 		height: 17,
-		borderRadius: 5,
+		borderRadius: (Ti.App.isAndroid) ? 10 : 5,
 		backgroundColor: '#dedede'
 	});
 	lockerIcon.add(lockerBody);
@@ -74,7 +108,7 @@ function FirstView() {
 		bottom: 5,
 		width: 8,
 		height: 8,
-		borderRadius: 4,
+		borderRadius: (Ti.App.isAndroid) ? 8 : 4,
 		backgroundColor: '#ffffff'
 	});
 	lockerIcon.add(lockerKeyHole);
@@ -90,7 +124,7 @@ function FirstView() {
 	var keyField = Ti.UI.createTextField({
 		passwordMask: true,
 		left: 5,
-		right: 65,
+		right: 85,
 		width: Ti.UI.FILL,
 		height: Ti.UI.FILL,
 		color: '#fff',
@@ -116,7 +150,7 @@ function FirstView() {
 		center: {x:'50%',y:'50%'},
 		text: L('setKey'),
 		font: {fontSize: '14sp'},
-		color: '#000',
+		color: '#ffffff',
 		touchEnabled: false
 	});
 	btnSet.add(btnLbl);
@@ -124,44 +158,40 @@ function FirstView() {
 		key = keyField.value.toString();
 		keyField.value = '';
 		keyField.blur();
-		keybox.animate({height: 1, opacity: 0.0, duration: 300});
+		if (Ti.App.isAndroid) {
+			tableView.animate({top: 50, duration: 300});
+		}
+		keybox.animate({height: 1, opacity: 0.0, duration: 300, backgroundColor: '#88829FB8'});
+		lockerIcon.active = true;
 		lockerIcon.animate({bottom: 5, opacity: 1.0, duration: 300});
 	});
 	keybox.add(btnSet);
 	
 	// CONTENT
-	var scrollView = Ti.UI.createScrollView({
-		height: Ti.UI.FILL,
-		width: Ti.UI.FILL,
-		backgroundColor: '#dedede'
-	});
-	self.add(scrollView);
-	
 	var tableView = Ti.UI.createTableView({
 		top: 5,
-		backgroundColor: scrollView.backgroundColor,
 		width: Ti.UI.FILL,
-		height: Ti.UI.SIZE,
+		height: '110%',
+		backgroundColor: '#dedede',
+		bottom: 0,
 		separatorStyle: (Ti.Platform.osname != 'android') ? Ti.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE : '',
 		separatorColor: 'transparent'
 	});
 	tableView.addEventListener('click', function(e) {
 		if ( key.length ) {
 			//var rowText = Ti.App.Blowfish.encrypt( e.row.value.text, key );
-			var rowTitle = ( e.row.title == L('newEntry') ) ? '' : e.row.title;
-			var detailWindow = new DetailWindow({title: rowTitle, text: e.row.value.text, key: key, filePath: e.row.value.filePath});
-			detailWindow.addEventListener('close', function () {
-				updateTableView();
-			});
-			detailWindow.open();
+			var rowTitle = ( e.row.title == ' ' + L('newEntry') ) ? '' : e.row.title;
+			var detailWindow = new DetailWindow({title: rowTitle.slice(1), text: e.row.value.text, key: key, filePath: e.row.value.filePath});
+			detailWindow.open(windowOpenAnimation);
 		} else {
-			alert(L('keyAlert'));
+			colorNotify(keybox, '#88D44E4E');
+			// '#88D44E4E' <-red '#88829FB8' <-blue
 		}
 	});
-	scrollView.add(tableView);
+	self.add(tableView);
 	
 	function updateTableView() {
-		
+
 		// load files and parse entries
 		var appDirFiles = appDir.getDirectoryListing();
 		var entries = [];
@@ -178,7 +208,7 @@ function FirstView() {
 		// generate tableView rows
 		var newEntryRow = Ti.UI.createTableViewRow({
 			backgroundColor: '#883AC23F',
-			title: L('newEntry'),
+			title: ' ' + L('newEntry'),
 			font: {fontSize: '18sp'},
 			color: '#000000',
 			value: {title: '', text: '', filePath: null},
@@ -191,8 +221,8 @@ function FirstView() {
 		for (var i = 0; i < entries.length; i++) {
 			Ti.API.log(entries[i].filePath);
 			var row = Ti.UI.createTableViewRow({
-				backgroundColor: '#88ffffff',
-				title: entries[i].title,
+				backgroundColor: (i % 2) ? '#99ffffff' : '#77ffffff',
+				title: ' ' + entries[i].title,
 				font: {fontSize: '18sp'},
 				color: '#000000',
 				value: entries[i],
@@ -207,6 +237,27 @@ function FirstView() {
 		tableView.setData(tableData);
 	}
 	updateTableView();
+
+	parent.addEventListener('focus', function () {
+		updateTableView();
+	});
+
+	if (Ti.App.isAndroid) {
+		parent.addEventListener('open', function () {
+			var activity = Ti.Android.currentActivity;
+			['resume', 'pause'].forEach(function(e) {
+				activity.addEventListener(e, function() {
+					lockerIcon.fireEvent('click');
+					Ti.API.info((new Date()) + " Activity: " + e + " HIT!");
+				});
+			});
+		});
+	} else {
+		Ti.App.addEventListener('pause', function(e) {
+			lockerIcon.fireEvent('click');
+		});
+	}
+		
 	
 	return self;
 }

@@ -1,16 +1,20 @@
 //Application Window Component Constructor
 function ApplicationWindow() {
 	//load component dependencies
-	var FirstView = require('ui/common/FirstView');
+	var MasterView = require('ui/common/MasterView');
 		
 	//create component instance
 	var self = Ti.UI.createWindow({
-		backgroundColor:'#ffffff'
+		backgroundColor:'#dedede',
+		navBarHidden:true,
+		fullscreen: false,
+		modal: false,
+		exitOnClose: true
 	});
 		
 	//construct UI
-	var firstView = new FirstView();
-	self.add(firstView);
+	var masterView = new MasterView(self);
+	self.add(masterView);
 	
 	return self;
 }
