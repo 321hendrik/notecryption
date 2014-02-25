@@ -63,8 +63,7 @@ function FirstView(parent) {
 				tableView.animate({top: 90, duration: 200});
 				keybox.animate({opacity: 1.0, height: 40, duration: 200});
 			} else {
-				keybox.opacity = 1.0;
-				keybox.height = 40;
+				keybox.animate({opacity: 1.0, height: 40, duration: 200});
 			}
 		}
 	});
@@ -104,6 +103,7 @@ function FirstView(parent) {
 	
 	// KEY-BOX
 	var keybox = Ti.UI.createView({
+		top: 0,
 		width: Ti.UI.FILL,
 		height: 40,
 		backgroundColor: '#88829FB8'
@@ -146,12 +146,19 @@ function FirstView(parent) {
 	btnSet.addEventListener('click', function () {
 		key = keyField.value.toString();
 		if (key.length) {
-			keyField.value = '';
-			keyField.blur();
 			if (Ti.App.isAndroid) {
+				keyField.value = '';
+				keyField.blur();
 				tableView.animate({top: 50, duration: 300});
+				keybox.animate({height: 1, opacity: 0.0, duration: 300, backgroundColor: '#88829FB8'});
+			} else {
+				keybox.animate({opacity: 0.0, duration: 300}, function () {
+				keybox.animate({height: 1, duration: 300, backgroundColor: '#88829FB8'}, function () {
+						keyField.value = '';
+						keyField.blur();
+					});
+				});
 			}
-			keybox.animate({height: 1, opacity: 0.0, duration: 300, backgroundColor: '#88829FB8'});
 			lockerIcon.active = true;
 			lockerIcon.animate({bottom: 5, opacity: 1.0, duration: 300});
 		} else {
