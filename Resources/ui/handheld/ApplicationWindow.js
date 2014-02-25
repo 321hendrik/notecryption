@@ -5,7 +5,7 @@ function ApplicationWindow() {
 		
 	//create component instance
 	var self = Ti.UI.createWindow({
-		backgroundColor:'#dedede',
+		backgroundColor:'#ffffff',
 		navBarHidden:true,
 		fullscreen: false,
 		modal: false,

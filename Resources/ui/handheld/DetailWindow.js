@@ -19,7 +19,7 @@ function DetailWindow(args) {
 		};
 	} else {
 		windowCloseAnimation = {
-			transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+			transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT//NONE//CURL_UP//FLIP_FROM_LEFT
 		};
 	}
 

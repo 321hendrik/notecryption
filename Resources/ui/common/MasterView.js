@@ -11,21 +11,8 @@ function FirstView(parent) {
 		};
 	} else {
 		windowOpenAnimation = {
-			transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_RIGHT
+			transition: Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_RIGHT//NONE//CURL_DOWN//FLIP_FROM_RIGHT
 		};
-	}
-
-	function colorNotify (viewObj, highlightColor) {
-		var baseColor = viewObj.backgroundColor;
-		viewObj.animate({
-			backgroundColor: baseColor,
-			duration: 200
-		}, function () {
-			viewObj.animate({
-				backgroundColor: highlightColor,
-				duration: 200
-			});
-		});
 	}
 	
 	//create app directory
@@ -36,7 +23,8 @@ function FirstView(parent) {
 	
 	var self = Ti.UI.createView({
 		top: (Ti.App.iOS7) ? 20 : 0,
-		layout: 'vertical'
+		layout: 'vertical',
+		background: '#dedede'
 	});
 	
 	// HEADER
@@ -157,14 +145,18 @@ function FirstView(parent) {
 	btnSet.add(btnLbl);
 	btnSet.addEventListener('click', function () {
 		key = keyField.value.toString();
-		keyField.value = '';
-		keyField.blur();
-		if (Ti.App.isAndroid) {
-			tableView.animate({top: 50, duration: 300});
+		if (key.length) {
+			keyField.value = '';
+			keyField.blur();
+			if (Ti.App.isAndroid) {
+				tableView.animate({top: 50, duration: 300});
+			}
+			keybox.animate({height: 1, opacity: 0.0, duration: 300, backgroundColor: '#88829FB8'});
+			lockerIcon.active = true;
+			lockerIcon.animate({bottom: 5, opacity: 1.0, duration: 300});
+		} else {
+			Ti.App.colorNotify(keybox, '#88D44E4E');
 		}
-		keybox.animate({height: 1, opacity: 0.0, duration: 300, backgroundColor: '#88829FB8'});
-		lockerIcon.active = true;
-		lockerIcon.animate({bottom: 5, opacity: 1.0, duration: 300});
 	});
 	keybox.add(btnSet);
 	
@@ -200,7 +192,7 @@ function FirstView(parent) {
 
 			detailWindow.open(windowOpenAnimation);
 		} else {
-			colorNotify(keybox, '#88D44E4E');
+			Ti.App.colorNotify(keybox, '#88D44E4E');
 			// '#88D44E4E' <-red '#88829FB8' <-blue
 		}
 	});

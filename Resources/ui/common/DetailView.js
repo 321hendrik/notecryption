@@ -80,6 +80,42 @@ function FirstView(args, parent) {
 		color: '#000'
 	});
 	scrollView.add(textArea);
+
+	// hint-text workaround
+	if (!Ti.App.isAndroid) {
+		var hintText = L('enterText');
+		 
+		var hint = Ti.UI.createLabel({
+			text: hintText,
+			color: 'gray',
+			textAlign: 'left',
+			left: 5,
+			top: 7,
+			font: {fontSize: '18sp'},
+			height: Ti.UI.SIZE,
+			width: Ti.UI.SIZE,
+			backgroundColor: 'transparent',
+			touchEnabled: true
+		});
+		 
+		textArea.add(hint);
+		 
+		if (textArea.value.length > 0) {
+			hint.hide();
+		}
+		
+		textArea.addEventListener('change', function(e) {
+			if (e.source.value.length > 0) {
+				hint.hide();
+			} else {
+				hint.show();
+			}
+		});
+		
+		hint.addEventListener('click', function(e) {
+			textArea.focus();
+		});
+	}
 	
 	var btnContainer = Ti.UI.createView({
 		backgroundColor: '#22dedede',
@@ -100,16 +136,24 @@ function FirstView(args, parent) {
 		left: 0,
 		width: ( enableDelete ) ? '33%' : '50%'
 	});
-	lblSave.addEventListener('click', function () {// @TODO fix saving changes to new file
-		Ti.API.log('filePath: '+filePath);
-		var file;
-		if ( !filePath ) {
-			file = Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'entries', 'entry_' + new Date().getTime() + '.json');
+	lblSave.addEventListener('click', function () {
+		if (!titleField.value) {
+			Ti.App.colorNotify(titleFieldContainer, '#D44E4E');
 		} else {
-			file = Ti.Filesystem.getFile(filePath);
+			titleFieldContainer.animate({
+				backgroundColor: '#3AC23F',
+				duration: 100
+			}, function () {
+				var file;
+				if ( !filePath ) {
+					file = Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'entries', 'entry_' + new Date().getTime() + '.json');
+				} else {
+					file = Ti.Filesystem.getFile(filePath);
+				}
+				file.write( JSON.stringify({title: titleField.value, text: Ti.App.Blowfish.encrypt( textArea.value, key )}) );
+				returnToMaster();
+			});
 		}
-		file.write( JSON.stringify({title: titleField.value, text: Ti.App.Blowfish.encrypt( textArea.value, key )}) );
-		returnToMaster();
 	});
 	btnContainer.add(lblSave);
 	
