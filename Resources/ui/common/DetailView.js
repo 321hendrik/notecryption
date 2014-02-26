@@ -51,6 +51,11 @@ function FirstView(args, parent) {
 		ellipsize: true,
 		backgroundColor: 'transparent',
 	});
+	titleField.addEventListener('return', function () {
+		if (!textArea.value) {
+			textArea.focus();
+		}
+	});
 	titleFieldContainer.add(titleField);
 	self.add(titleFieldContainer);
 	
@@ -126,6 +131,42 @@ function FirstView(args, parent) {
 	
 	var enableDelete = ( filePath ) ? true : false;
 	
+	// cancel button
+	var lblCancel = Ti.UI.createLabel({
+		text: L('cancel'),
+		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+		verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
+		font: {fontSize: '16sp'},
+		color: '#000000',
+		left: 0,
+		width: ( enableDelete ) ? '33%' : '50%'
+	});
+	lblCancel.addEventListener('click', function () {
+		returnToMaster();
+	});
+	btnContainer.add(lblCancel);
+	
+	if ( enableDelete ) {
+		// delete button
+		var lblDelete = Ti.UI.createLabel({
+			text: L('delete'),
+			textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+			verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
+			font: {fontSize: '16sp'},
+			color: '#EB2A2A',
+			center: {x: '50%'},
+			width: '34%'
+		});
+		lblDelete.addEventListener('click', function () {
+			var file = Ti.Filesystem.getFile(filePath);
+			if ( file.exists() ) {
+				file.deleteFile();
+			}
+			returnToMaster();
+		});
+		btnContainer.add(lblDelete);
+	}
+
 	// save button
 	var lblSave = Ti.UI.createLabel({
 		text: L('save'),
@@ -133,7 +174,7 @@ function FirstView(args, parent) {
 		verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
 		font: {fontSize: '16sp'},
 		color: '#3AC23F',
-		left: 0,
+		right: 0,
 		width: ( enableDelete ) ? '33%' : '50%'
 	});
 	lblSave.addEventListener('click', function () {
@@ -157,43 +198,13 @@ function FirstView(args, parent) {
 	});
 	btnContainer.add(lblSave);
 	
-	if ( enableDelete ) {
-		// delete button
-		var lblDelete = Ti.UI.createLabel({
-			text: L('delete'),
-			textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-			verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
-			font: {fontSize: '16sp'},
-			color: '#EB2A2A',
-			center: {x: '50%'},
-			width: '34%'
-		});
-		lblDelete.addEventListener('click', function () {
-			var file = Ti.Filesystem.getFile(filePath);
-			if ( file.exists() ) {
-				file.deleteFile();
-			}
-			returnToMaster();
-		});
-		btnContainer.add(lblDelete);
-	}
-	
-	// cancel button
-	var lblCancel = Ti.UI.createLabel({
-		text: L('cancel'),
-		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-		verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
-		font: {fontSize: '16sp'},
-		color: '#000000',
-		right: 0,
-		width: ( enableDelete ) ? '33%' : '50%'
-	});
-	lblCancel.addEventListener('click', function () {
-		returnToMaster();
-	});
-	btnContainer.add(lblCancel);
-	
 	self.add(btnContainer);
+
+	if (Ti.App.isAndroid) {
+		self.addEventListener('focus', function() {
+			titleField.focus();
+		});
+	}
 	
 	return self;
 }

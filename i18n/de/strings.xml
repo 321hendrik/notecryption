@@ -8,4 +8,5 @@
 	<string name="save">Speichern</string>
 	<string name="delete">Löschen</string>
 	<string name="newEntry">Neuen Eintrag erstellen...</string>
+	<string name="unlocked">Ihre Notizen sind entsperrt.</string>
 </resources>

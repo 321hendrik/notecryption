@@ -23,6 +23,7 @@ function FirstView(parent) {
 	
 	var self = Ti.UI.createView({
 		top: (Ti.App.iOS7) ? 20 : 0,
+		height: Ti.UI.FILL,
 		layout: 'vertical',
 		background: '#dedede'
 	});
@@ -127,6 +128,9 @@ function FirstView(parent) {
 		value: '',
 		font: {fontSize: '16sp'}
 	});
+	keyField.addEventListener('return', function () {
+		btnSet.fireEvent('click');
+	});
 	keybox.add(keyField);
 	
 	var btnSet = Ti.UI.createView({
@@ -149,7 +153,7 @@ function FirstView(parent) {
 			if (Ti.App.isAndroid) {
 				keyField.value = '';
 				keyField.blur();
-				tableView.animate({top: 50, duration: 300});
+				tableView.animate({top: 50, bottom: 0, duration: 300});
 				keybox.animate({height: 1, opacity: 0.0, duration: 300, backgroundColor: '#88829FB8'});
 			} else {
 				keybox.animate({opacity: 0.0, duration: 300}, function () {
@@ -171,11 +175,12 @@ function FirstView(parent) {
 	var tableView = Ti.UI.createTableView({
 		top: 5,
 		width: Ti.UI.FILL,
-		height: '110%',
+		height: Ti.UI.FILL,
 		backgroundColor: '#dedede',
 		bottom: 0,
 		separatorStyle: (Ti.Platform.osname != 'android') ? Ti.UI.iPhone.TableViewSeparatorStyle.SINGLE_LINE : '',
-		separatorColor: 'transparent'
+		separatorColor: 'transparent',
+		zIndex: 2
 	});
 	tableView.addEventListener('click', function(e) {
 		if ( key.length ) {
@@ -204,12 +209,24 @@ function FirstView(parent) {
 		}
 	});
 	self.add(tableView);
+
+	if (Ti.App.isAndroid) {
+		var lblUnlocked = Ti.UI.createLabel({
+			top: -30,
+			center: {x:'50%'},
+			text: L('unlocked'),
+			font: {fontSize: '14sp'},
+			color: '#ffffff',
+			zIndex: 999
+		});
+		self.add(lblUnlocked);
+	}
 	
 	function updateTableView(callback) {
 		// load files and parse entries
 		var appDirFiles = appDir.getDirectoryListing();
 		var entries = [];
-		for (i = 0; i < appDirFiles.length; i++) {
+		for (i = appDirFiles.length; i--;) {
 			var file = Ti.Filesystem.getFile(Ti.Filesystem.getApplicationDataDirectory(), 'entries', appDirFiles[i]);
 			if ( file.exists() ) {
 				var entry = JSON.parse(file.read());
@@ -272,7 +289,12 @@ function FirstView(parent) {
 			lockerIcon.fireEvent('click');
 		});
 	}
-		
+	
+	if (!Ti.App.isAndroid) {
+		setTimeout(function () {
+			keyField.focus();
+		}, 250);
+	}
 	
 	return self;
 }
